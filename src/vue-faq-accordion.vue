@@ -25,7 +25,11 @@
             <collapse-transition>
               <div v-if="i === activeQuestionIndex">
                 <slot v-bind:item="item">
-                  <p class="accordion__value" v-html="item[answerProperty]"></p>
+                  <p class="accordion__value" v-if="renderAs === 'markdown'">
+                    <vue-markdown>{{ item[answerProperty] }}</vue-markdown>
+                  </p>
+                  <p class="accordion__value" v-else-if="renderAs === 'text'">{{ item[answerProperty] }}</p>
+                  <p class="accordion__value" v-else v-html="item[answerProperty]"></p>
                 </slot>
               </div>
             </collapse-transition>
@@ -38,11 +42,13 @@
 
 <script>
   import { CollapseTransition } from 'vue2-transitions'
+  import VueMarkdown from 'vue-markdown'
 
   export default {
     name: 'VueFaqAccordion',
     components: {
-      CollapseTransition
+      CollapseTransition,
+      VueMarkdown
     },
     data () {
       return {
@@ -103,7 +109,15 @@
       fontColor: {
         type: String,
         default: '#000000'
-      }
+      },
+      /**
+       * various render type options 
+       * possible values: 'text', 'html', 'markdown'
+       */
+      renderAs: {
+        type: String,
+        default:'html',
+      },
     },
     computed: {
       categories () {
